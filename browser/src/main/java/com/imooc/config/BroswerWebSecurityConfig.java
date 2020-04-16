@@ -27,6 +27,8 @@ public class BroswerWebSecurityConfig extends WebSecurityConfigurerAdapter {
     protected void configure(HttpSecurity http) throws Exception {
         ValidataCodeFilter validataCodeFilter = new ValidataCodeFilter();
         validataCodeFilter.setAuthenticationFailureHandler(imoocAuthenticationFailureHandler);
+        validataCodeFilter.setSecurityProperties(securityProperties);
+        validataCodeFilter.afterPropertiesSet();
 
         http.addFilterBefore(validataCodeFilter, UsernamePasswordAuthenticationFilter.class)
         .formLogin()

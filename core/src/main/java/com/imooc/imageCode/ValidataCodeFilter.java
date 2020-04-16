@@ -1,10 +1,13 @@
 package com.imooc.imageCode;
 
 import com.imooc.controller.ValidateImageCodeController;
+import com.imooc.properties.SecurityProperties;
 import org.apache.commons.lang.StringUtils;
+import org.springframework.beans.factory.InitializingBean;
 import org.springframework.security.web.authentication.AuthenticationFailureHandler;
 import org.springframework.social.connect.web.HttpSessionSessionStrategy;
 import org.springframework.social.connect.web.SessionStrategy;
+import org.springframework.util.AntPathMatcher;
 import org.springframework.web.bind.ServletRequestBindingException;
 import org.springframework.web.bind.ServletRequestUtils;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -15,19 +18,43 @@ import javax.servlet.ServletException;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 import java.io.IOException;
+import java.util.Collections;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * 图形验证码过滤器
  */
-public class ValidataCodeFilter extends OncePerRequestFilter {
+public class ValidataCodeFilter extends OncePerRequestFilter implements InitializingBean {
 
     private AuthenticationFailureHandler authenticationFailureHandler;
     private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
+    private SecurityProperties securityProperties;
+    private Set<String> urls = new HashSet<>();
+    private AntPathMatcher antPathMatcher = new AntPathMatcher();
+    private boolean action;
+
+    /**
+     * 当所有的bean装配完成后，再装配这个bean
+     * @throws ServletException
+     */
+    @Override
+    public void afterPropertiesSet() throws ServletException {
+        String urlConfig = securityProperties.getCode().getImage().getUrls();
+        String[] splitUrl = urlConfig.split(",");
+        Collections.addAll(urls, splitUrl);
+        urls.add("/authentication/form");
+    }
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
-        if (StringUtils.equals(httpServletRequest.getRequestURI(), "/authentication/form") &&
-            StringUtils.equalsIgnoreCase(httpServletRequest.getMethod(), "POST")) {
+        // 判断request中uri是否匹配urls
+        urls.forEach(url-> {
+            if (antPathMatcher.match(url, httpServletRequest.getRequestURI())) {
+                action = true;
+            }
+        });
+            if (action) {
             try {
                 validate(new ServletWebRequest(httpServletRequest));
             } catch (ValidataCodeException e) {
@@ -67,5 +94,13 @@ public class ValidataCodeFilter extends OncePerRequestFilter {
 
     public void setAuthenticationFailureHandler(AuthenticationFailureHandler authenticationFailureHandler) {
         this.authenticationFailureHandler = authenticationFailureHandler;
+    }
+
+    public SecurityProperties getSecurityProperties() {
+        return securityProperties;
+    }
+
+    public void setSecurityProperties(SecurityProperties securityProperties) {
+        this.securityProperties = securityProperties;
     }
 }
