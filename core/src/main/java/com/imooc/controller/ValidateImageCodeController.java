@@ -3,7 +3,7 @@ package com.imooc.controller;
 import com.imooc.imageCode.ImageCode;
 import org.springframework.social.connect.web.HttpSessionSessionStrategy;
 import org.springframework.social.connect.web.SessionStrategy;
-import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.context.request.ServletWebRequest;
@@ -21,7 +21,7 @@ public class ValidateImageCodeController {
     public static final String SESSION_IMAGE_CODE_KEY = "session_image_code_key";
     private SessionStrategy sessionStrategy = new HttpSessionSessionStrategy();
 
-    @PostMapping("/create")
+    @GetMapping("/create")
     public void createImageCode(HttpServletRequest request, HttpServletResponse response) {
         ImageCode imageCode = createImageCode(request);
         sessionStrategy.setAttribute(new ServletWebRequest(request), SESSION_IMAGE_CODE_KEY, imageCode);

@@ -38,7 +38,7 @@ public class BroswerWebSecurityConfig extends WebSecurityConfigurerAdapter {
                 .authorizeRequests()
                 .antMatchers("/authentication/require",
                         securityProperties.getBrowser().getLoginPage(),
-                        "code/imgage/create").permitAll()
+                        "/image/code/create").permitAll()
                 .anyRequest()
                 .authenticated()
                 .and()
