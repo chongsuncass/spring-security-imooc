@@ -1,7 +1,7 @@
 package com.imooc;
 
-import com.imooc.imageCode.ImageCode;
-import com.imooc.imageCode.ValidateGenerator;
+import com.imooc.code.image.ImageCode;
+import com.imooc.code.ValidateGenerator;
 
 import javax.servlet.http.HttpServletRequest;
 

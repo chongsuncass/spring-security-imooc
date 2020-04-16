@@ -1,8 +1,8 @@
-package com.imooc.imageCode;
+package com.imooc.code;
 
 import javax.servlet.http.HttpServletRequest;
 
 public interface ValidateGenerator {
 
-   ImageCode createImageCode(HttpServletRequest request);
+   ValidateCode createImageCode(HttpServletRequest request);
 }

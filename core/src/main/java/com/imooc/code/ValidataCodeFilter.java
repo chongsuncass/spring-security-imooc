@@ -1,5 +1,6 @@
-package com.imooc.imageCode;
+package com.imooc.code;
 
+import com.imooc.code.image.ImageCode;
 import com.imooc.controller.ValidateImageCodeController;
 import com.imooc.properties.SecurityProperties;
 import org.apache.commons.lang.StringUtils;
@@ -36,36 +37,41 @@ public class ValidataCodeFilter extends OncePerRequestFilter implements Initiali
 
     /**
      * 当所有的bean装配完成后，再装配这个bean
+     *
      * @throws ServletException
      */
     @Override
     public void afterPropertiesSet() throws ServletException {
         String urlConfig = securityProperties.getCode().getImage().getUrls();
-        String[] splitUrl = urlConfig.split(",");
-        Collections.addAll(urls, splitUrl);
+        if (StringUtils.isNotEmpty(urlConfig)) {
+            String[] splitUrl = urlConfig.split(",");
+            Collections.addAll(urls, splitUrl);
+        }
         urls.add("/authentication/form");
     }
 
     @Override
     protected void doFilterInternal(HttpServletRequest httpServletRequest, HttpServletResponse httpServletResponse, FilterChain filterChain) throws ServletException, IOException {
         // 判断request中uri是否匹配urls
-        urls.forEach(url-> {
+        urls.forEach(url -> {
             if (antPathMatcher.match(url, httpServletRequest.getRequestURI())) {
                 action = true;
             }
         });
-            if (action) {
+        if (action) {
             try {
                 validate(new ServletWebRequest(httpServletRequest));
             } catch (ValidataCodeException e) {
                 authenticationFailureHandler.onAuthenticationFailure(httpServletRequest, httpServletResponse, e);
             }
         }
+        httpServletResponse.reset();
         filterChain.doFilter(httpServletRequest, httpServletResponse);
     }
 
     /**
      * 验证session中存储的码
+     *
      * @param servletWebRequest
      */
     private void validate(ServletWebRequest servletWebRequest) throws ServletRequestBindingException {

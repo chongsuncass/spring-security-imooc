@@ -1,5 +1,6 @@
-package com.imooc.imageCode;
+package com.imooc.code.image;
 
+import com.imooc.code.ValidateGenerator;
 import com.imooc.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.ServletRequestUtils;

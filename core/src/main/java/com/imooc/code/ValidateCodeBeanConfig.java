@@ -1,5 +1,6 @@
-package com.imooc.imageCode;
+package com.imooc.code;
 
+import com.imooc.code.image.ImageCodeGenerator;
 import com.imooc.properties.SecurityProperties;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnMissingBean;

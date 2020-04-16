@@ -1,4 +1,4 @@
-package com.imooc.imageCode;
+package com.imooc.code;
 
 import org.springframework.security.core.AuthenticationException;
 
